@@ -10,6 +10,7 @@ use App\Entity\Article;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Comment;
 use App\Form\User\CommentType;
+use App\Entity\Rate;
 
 class DefaultController extends AbstractController
 {
@@ -38,10 +39,11 @@ class DefaultController extends AbstractController
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
+        $currentUser = $this->getUser();
         if ($form->isSubmitted() && $form->isValid() && $this->isGranted('ROLE_USER')) {
             $entityManager = $this->getDoctrine()->getManager();
             $comment->setArticle($article);
-            $comment->setUser($this->getUser());
+            $comment->setUser($currentUser);
             $entityManager->persist($comment);
             $entityManager->flush();
             $this->addFlash('success', 'Created');
@@ -55,9 +57,18 @@ class DefaultController extends AbstractController
             $request->query->getInt('page', 1),
             Comment::NUM_ITEMS
         );
+        if (!empty($currentUser)) {
+            $userRate = $entityManager->getRepository(Rate::class)->findOneBy([
+                "user" => $currentUser->getId(),
+                "article" => $article->getId(),
+            ]);
+        } else {
+            $userRate = null;
+        }
         
         return $this->render('default/article/show.html.twig', [
             'form' => $form->createView(),
+            'userRate' => $userRate,
             'article' => $article,
             'comments' => $comments,
             'image_directory' => basename($this->getParameter('image_directory')),

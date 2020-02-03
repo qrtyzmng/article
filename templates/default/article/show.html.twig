@@ -16,9 +16,15 @@
     <div class="col-md-12">
         {% if is_granted('ROLE_USER') %}
             {{ include('user/comment/_form.html.twig') }}
+            {% if userRate is not empty %}
+                Your rate: {{ userRate.value }}
+            {% else %}    
+                 <a href="{{ path("user_rate_new", {"id": article.id}) }}">Rate this Article</a>
+            {% endif %}     
         {% else %}
             To comment <a href="{{ path("fos_user_security_login") }}">Login</a>
         {% endif %}
+        {% if article.rate is not empty %}<span>Total rate: {{ article.rate }}/5 </span>{% endif %}
     </div>
     <div class="col-md-12">
     {% for comment in comments %}
@@ -30,11 +36,9 @@
         </div>
     {% endfor %}
     </div>
-    {% if comments is not empty%}
-        <div class="navigation">
+        <div class="navigation mt-2">
             {{ knp_pagination_render(comments) }}
         </div>
-    {% endif %}
     </div>    
     <a href="{{ path('default_index') }}">back to list</a>
 {% endblock %}

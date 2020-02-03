@@ -16,8 +16,8 @@ class ArticleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', TextType::class)
-            ->add('content', CKEditorType::class, array('label' => false, "config_name" => "my_config"))
+            ->add('title', TextType::class, ['attr' => ['class' => 'form-control mb-2']])
+            ->add('content', CKEditorType::class, array('label' => 'Content', "config_name" => "my_config"))
             ->add('image', FileType::class, [
                 'label' => 'Image (PNG, JPG)',
                 'mapped' => false,

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RateRepository")
@@ -23,6 +24,10 @@ class Rate
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 5
+     * )
      */
     private $value;
 

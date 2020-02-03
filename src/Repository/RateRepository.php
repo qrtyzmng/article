@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Rate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use App\Entity\Article;
 
 /**
  * @method Rate|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,33 +19,16 @@ class RateRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Rate::class);
     }
-
-    // /**
-    //  * @return Rate[] Returns an array of Rate objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function getSumValuesByArticle(Article $article)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb = $this->getEntityManager()->createQueryBuilder('c');
+        $qb->select('SUM(r.value) as value, COUNT(r.value) as amount');
+        $qb->from('App:Rate', 'r');
+        $qb->where('r.article = :article');
+        $qb->setParameter('article', $article->getId());
+        
+        return $qb->getQuery()->getSingleResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Rate
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+    
 }

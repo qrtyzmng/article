@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
@@ -21,6 +22,11 @@ class Article
         $this->createdAt = new \DateTime("now");
     }
     
+    public function __toString() 
+    {
+        return $this->title;
+    }
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,11 +36,16 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 64
+     * )
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
      */
     private $content;
 
@@ -58,6 +69,11 @@ class Article
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $rate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,7 +96,7 @@ class Article
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
 
@@ -169,6 +185,18 @@ class Article
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getRate(): ?float
+    {
+        return $this->rate;
+    }
+
+    public function setRate(?float $rate): self
+    {
+        $this->rate = $rate;
 
         return $this;
     }

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Rate{% endblock %}
+
+{% block body %}
+    <h1>Rate {{ article.title }}</h1>
+
+    {{ include('user/rate/_form.html.twig') }}
+
+    <a href="{{ path('default_article_show', {"id": article.id}) }}">back to list</a>
+{% endblock %}
