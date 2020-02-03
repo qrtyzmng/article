@@ -13,5 +13,28 @@
     <div class="col-md-12">
         {{ article.content|raw }}
     </div>
+    <div class="col-md-12">
+        {% if is_granted('ROLE_USER') %}
+            {{ include('user/comment/_form.html.twig') }}
+        {% else %}
+            To comment <a href="{{ path("fos_user_security_login") }}">Login</a>
+        {% endif %}
+    </div>
+    <div class="col-md-12">
+    {% for comment in comments %}
+        <div class="card mt-2">
+            <div class="card-body">
+                <h5 class="card-title">{{ comment.user.username }}</h5><small>{{ comment.createdAt|date("Y-m-d H:i") }}</small>
+                <p class="card-text">{{ comment.content }}</p>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    {% if comments is not empty%}
+        <div class="navigation">
+            {{ knp_pagination_render(comments) }}
+        </div>
+    {% endif %}
+    </div>    
     <a href="{{ path('default_index') }}">back to list</a>
 {% endblock %}

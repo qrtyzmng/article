@@ -9,6 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comment
 {
+
+    const NUM_ITEMS = 10;
+    
+    public function __construct() 
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -30,6 +38,11 @@ class Comment
      * @ORM\ManyToOne(targetEntity="App\Entity\Article", inversedBy="comments")
      */
     private $article;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -68,6 +81,18 @@ class Comment
     public function setArticle(?Article $article): self
     {
         $this->article = $article;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

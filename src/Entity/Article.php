@@ -14,6 +14,13 @@ class Article
     const NUM_ITEMS = 10;
     const SHORT_DESC_LEN = 100;
     
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+        $this->rates = new ArrayCollection();
+        $this->createdAt = new \DateTime("now");
+    }
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -46,11 +53,10 @@ class Article
      */
     private $rates;
 
-    public function __construct()
-    {
-        $this->comments = new ArrayCollection();
-        $this->rates = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -151,6 +157,18 @@ class Article
                 $rate->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
