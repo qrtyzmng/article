@@ -31,7 +31,7 @@ class Article
     /**
      * @ORM\Column(type="string", length=32, nullable=true)
      */
-    private $image;
+    private $imageFilename;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
@@ -78,14 +78,14 @@ class Article
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImageFilename(): ?string
     {
-        return $this->image;
+        return $this->imageFilename;
     }
 
-    public function setImage(?string $image): self
+    public function setImageFilename(?string $imageFilename): self
     {
-        $this->image = $image;
+        $this->imageFilename = $imageFilename;
 
         return $this;
     }

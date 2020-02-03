@@ -78,6 +78,18 @@
     "egulias/email-validator": {
         "version": "2.1.15"
     },
+    "friendsofsymfony/ckeditor-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "8eb1cd0962ded6a6d6e1e5a9b6d3e888f9f94ff6"
+        },
+        "files": [
+            "config/packages/fos_ckeditor.yaml"
+        ]
+    },
     "friendsofsymfony/user-bundle": {
         "version": "v2.1.2"
     },
@@ -105,8 +117,23 @@
     "psr/log": {
         "version": "1.1.2"
     },
+    "sensio/framework-extra-bundle": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.2",
+            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
+        },
+        "files": [
+            "config/packages/sensio_framework_extra.yaml"
+        ]
+    },
     "swiftmailer/swiftmailer": {
         "version": "v6.2.3"
+    },
+    "symfony/asset": {
+        "version": "v4.4.4"
     },
     "symfony/cache": {
         "version": "v4.4.4"
@@ -150,6 +177,9 @@
     },
     "symfony/event-dispatcher-contracts": {
         "version": "v1.1.7"
+    },
+    "symfony/expression-language": {
+        "version": "v4.4.4"
     },
     "symfony/filesystem": {
         "version": "v4.4.4"
