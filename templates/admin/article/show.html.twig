@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1>Article</h1>
-    <img src="/{{image_directory}}/{{ article.imageFilename }}">
+    {% if article.imageFilename is not empty %}<img src="/{{image_directory}}/{{ article.imageFilename }}">{% endif %}
     <table class="table">
         <tbody>
             <tr>

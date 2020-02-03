@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Article
 {
     const NUM_ITEMS = 10;
+    const SHORT_DESC_LEN = 100;
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
