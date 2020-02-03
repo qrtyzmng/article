@@ -40,14 +40,21 @@ class RateController extends AbstractController
             
             $rate->setArticle($article);
             $rate->setUser($currentUser);
-            $entityManager->persist($rate);
-            $entityManager->flush();
+            $conn = $this->getDoctrine()->getConnection();
+            $conn->beginTransaction();
+            try {
+                $entityManager->persist($rate);
+                $entityManager->flush();
             
-            $currentRate = $entityManager->getRepository(Rate::class)->getSumValuesByArticle($article);
-            $article->setRate($currentRate['value']/$currentRate['amount']);
+                $currentRate = $entityManager->getRepository(Rate::class)->getSumValuesByArticle($article);
+                $article->setRate($currentRate['value']/$currentRate['amount']);
             
-            $entityManager->persist($article);
-            $entityManager->flush();
+                $entityManager->persist($article);
+                $entityManager->flush();
+                $conn->commit();
+            } catch (\Exception $e) {
+                $conn->rollback();
+            }    
 
             return $this->redirectToRoute('default_article_show', ['id' => $article->getId()]);
         }
