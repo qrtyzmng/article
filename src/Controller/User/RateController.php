@@ -3,6 +3,7 @@
 namespace App\Controller\User;
 
 use App\Entity\Rate;
+use App\Util\Rate as RateUtil;
 use App\Form\User\RateType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +48,7 @@ class RateController extends AbstractController
                 $entityManager->flush();
             
                 $currentRate = $entityManager->getRepository(Rate::class)->getSumValuesByArticle($article);
-                $article->setRate($currentRate['value']/$currentRate['amount']);
+                $article->setRate(RateUtil::calculateRate($currentRate['value'], $currentRate['amount']));
             
                 $entityManager->persist($article);
                 $entityManager->flush();
