@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Article index{% endblock %}
+{% block title %}Articles{% endblock %}
 
 {% block body %}
     <h1>Article index</h1>
@@ -10,8 +10,7 @@
             <tr>
                 <th>Id</th>
                 <th>Title</th>
-                <th>Content</th>
-                <th>Image</th>
+                <th>Filename</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -20,8 +19,7 @@
             <tr>
                 <td>{{ article.id }}</td>
                 <td>{{ article.title }}</td>
-                <td>{{ article.content }}</td>
-                <td>{{ article.image }}</td>
+                <td>{{ article.imageFilename }}</td>
                 <td>
                     <a href="{{ path('admin_article_show', {'id': article.id}) }}">show</a>
                     <a href="{{ path('admin_article_edit', {'id': article.id}) }}">edit</a>
@@ -34,6 +32,8 @@
         {% endfor %}
         </tbody>
     </table>
-
+    <div class="navigation">
+        {{ knp_pagination_render(articles) }}
+    </div>
     <a href="{{ path('admin_article_new') }}">Create new</a>
 {% endblock %}

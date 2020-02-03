@@ -4,13 +4,14 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Form\Admin\ArticleType;
-use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\Form;
 
 /**
  * @Route("/admin/article")
@@ -20,10 +21,17 @@ class ArticleController extends AbstractController
     /**
      * @Route("/", name="admin_article_index", methods={"GET"})
      */
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+        $articles = $paginator->paginate(
+            $entityManager->getRepository(Article::class)->getLatest(),
+            $request->query->getInt('page', 1),
+            Article::NUM_ITEMS
+        );
+        
         return $this->render('admin/article/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
+            'articles' => $articles,
         ]);
     }
 
@@ -38,27 +46,12 @@ class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            /** @var UploadedFile $brochureFile */
-            $imageFile = $form->get('image')->getData();
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-                try {
-                    $imageFile->move(
-                        $this->getParameter('image_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    
-                }
-                $article->setImageFilename($newFilename);
-            }
+            $article = $this->saveFile($article, $form);
             
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($article);
             $entityManager->flush();
-
+            $this->addFlash('success', 'Created');
             return $this->redirectToRoute('admin_article_index');
         }
 
@@ -75,6 +68,7 @@ class ArticleController extends AbstractController
     {
         return $this->render('admin/article/show.html.twig', [
             'article' => $article,
+            'image_directory' => basename($this->getParameter('image_directory'))
         ]);
     }
 
@@ -87,8 +81,13 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
+            
+            $article = $this->saveFile($article, $form);
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($article);
+            $entityManager->flush();
+            $this->addFlash('success', 'Updated');
             return $this->redirectToRoute('admin_article_index');
         }
 
@@ -107,8 +106,37 @@ class ArticleController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($article);
             $entityManager->flush();
+            $this->addFlash('success', 'Deleted');
         }
 
         return $this->redirectToRoute('admin/admin_article_index');
     }
+    
+    /**
+     * 
+     * @param Article $article
+     * @param Form $form
+     * @return Article
+     */
+    public function saveFile(Article $article, Form $form)
+    {
+        /** @var UploadedFile $imageFile */
+        $imageFile = $form->get('image')->getData();
+        if ($imageFile) {
+            $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+            try {
+                $imageFile->move(
+                    $this->getParameter('image_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                $this->addFlash('danger', 'Error');
+            }
+            $article->setImageFilename($newFilename);
+        }
+        
+        return $article;
+    }        
 }

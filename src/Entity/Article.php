@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Article
 {
+    const NUM_ITEMS = 10;
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
