@@ -5,6 +5,7 @@ namespace App\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use App\Entity\Article;
+use App\Util\Twig;
 
 class AppExtension extends AbstractExtension
 {
@@ -17,11 +18,6 @@ class AppExtension extends AbstractExtension
     
     public function shortContent($data)
     {
-        $formattedData = strip_tags($data);
-        if (strlen($formattedData) > Article::SHORT_DESC_LEN) {
-            $formattedData = substr($formattedData, 0, 99). "...";
-        }
-       
-        return $formattedData;
+        return Twig::getShortContent($data, Article::SHORT_DESC_LEN);
     }
 }
